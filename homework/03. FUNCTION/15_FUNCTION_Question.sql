@@ -10,5 +10,9 @@ SELECT TO_CHAR(HIREDATE, 'YYYY') || '년 ' || TO_CHAR(HIREDATE, 'MM') || '월 ' 
   FROM PROFESSOR
 
 --3) 교수중에 3월에 부임한 교수의 명단을 검색하세요
-SELECT *
+SELECT PNO
+     , PNAME
+     , HIREDATE
+     , TO_CHAR(HIREDATE, 'MM')
   FROM PROFESSOR
+ WHERE TO_CHAR(HIREDATE, 'MM') = '03'
