@@ -1,5 +1,7 @@
 --1) 과목번호, 과목이름, 과목별 평균 기말고사 성적을 갖는 레코드의 배열을 만들고
 --   기본 LOOP문을 이용해서 모든 과목의 과목번호, 과목이름, 과목별 평균 기말고사 성적을 출력하세요.
+--1) 과목번호, 과목이름, 과목별 평균 기말고사 성적을 갖는 레코드의 배열을 만들고
+--   기본 LOOP문을 이용해서 모든 과목의 과목번호, 과목이름, 과목별 평균 기말고사 성적을 출력하세요.
 DECLARE
     CURSOR CR_RC_CUR IS
         SELECT CR.CNO
@@ -19,6 +21,8 @@ DECLARE
 
     TYPE CR_REC_ARR IS TABLE OF CR_REC
     INDEX BY PLS_INTEGER;
+    
+    CRREC CR_REC;                                       -- 1.
 
     CRRECARR CR_REC_ARR;
     IDX NUMBER := 1;
@@ -26,9 +30,9 @@ BEGIN
     OPEN CR_RC_CUR;
 
     LOOP
-        FETCH CR_RC_CUR INTO CRRECARR(IDX);
-        --FETCH CR_RC_CUR INTO CR_REC;
-        --CRRECARR(IDX) := CR_REC;
+--        FETCH CR_RC_CUR INTO CRRECARR(IDX);           -- 2. 커서에 있는 값을 배열에 바로 담을 수 있다.
+        FETCH CR_RC_CUR INTO CRREC;                     -- record 타입의 변수를 담으려면 1.처럼 값을 담을 수 있는 변수를 만들어야 한다.
+        CRRECARR(IDX) := CRREC;                         -- 
         EXIT WHEN CR_RC_CUR%NOTFOUND;
         
         DBMS_OUTPUT.PUT_LINE(CRRECARR(IDX).CNO);
