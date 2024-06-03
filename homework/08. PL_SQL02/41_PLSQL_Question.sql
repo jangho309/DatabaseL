@@ -21,23 +21,56 @@ DECLARE
     INDEX BY PLS_INTEGER;
 
     CRRECARR CR_REC_ARR;
-
-    NUM NUMBER := 1;
+    IDX NUMBER := 1;
 BEGIN
     OPEN CR_RC_CUR;
 
     LOOP
-        FETCH CR_RC_CUR INTO CR_REC;
-        CRRECARR(NUM) := CR_REC;
-        NUM := NUM + 1;
-        
+        FETCH CR_RC_CUR INTO CRRECARR(IDX);
+        --FETCH CR_RC_CUR INTO CR_REC;
+        --CRRECARR(IDX) := CR_REC;
         EXIT WHEN CR_RC_CUR%NOTFOUND;
+        
+        DBMS_OUTPUT.PUT_LINE(CRRECARR(IDX).CNO);
+        DBMS_OUTPUT.PUT_LINE(CRRECARR(IDX).CNAME);
+        DBMS_OUTPUT.PUT_LINE(CRRECARR(IDX).COURSE_AVG);
+        
+        IDX := IDX + 1;
     END LOOP;
-    
-     DBMS_OUTPUT.PUT_LINE(CRRECARR.LAST);
 END;
-
+/
 
 --2) 학생번호, 학생이름과 학생별 평균 기말고사 성적을 갖는 테이블 T_STAVGSC를 만들고
 --   커서를 이용하여 학생번호, 학생이름, 학생별 평균 기말고사 성적을 조회하고 
 --   조회된 데이터를 생성한 테이블인 T_STAVGSC에 저장하세요.
+CREATE TABLE T_STAVGSC(
+    SNO             VARCHAR2(8),
+    SNAME           VARCHAR2(20),
+    AVG_RESULT      NUMBER  
+);
+
+DECLARE
+    CURSOR ST_AVG_CUR IS
+        SELECT ST.SNO
+             , ST.SNAME
+             , ROUND(AVG(SC.RESULT), 2)
+          FROM STUDENT ST
+          JOIN SCORE SC
+            ON ST.SNO = SC.SNO;
+    T_STAVGSC_ROW T_STAVGSC%ROWTYPE;
+BEGIN
+    OPEN ST_AVG_CUR;
+    
+    LOOP
+        FETCH ST_AVG_CUR INTO T_STAVGSC_ROW;
+        
+        EXIT WHEN ST_AVG_CUR%NOTFOUND;
+        
+        INSERT INTO T_STAVGSC VALUES T_STAVGSC_ROW;
+    END LOOP;
+    
+    CLOSE ST_AVG_CUR;
+END;
+
+SELECT *
+  FROM T_STAVGSC
